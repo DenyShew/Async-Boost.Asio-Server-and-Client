@@ -37,7 +37,6 @@ public:
 #ifdef DEBUG
         std::cout<<"client start connect: "<<this->login<<std::endl;
 #endif
-        //Подключение std::shared_ptr<socket> в конечной точке
         this->sock->async_connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::make_address(ip), port),
                                   [this](const boost::system::error_code& error)
         {
@@ -48,7 +47,6 @@ public:
 #endif
                 std::string msg = this->login + " "+this->pass;
                 std::copy(msg.begin(), msg.end(), this->buf);
-                //Ввод логина и пароля по подключенному сокету
                 this->sock->async_write_some(boost::asio::buffer(this->buf, msg.size()),
                                              [this](const boost::system::error_code& error, size_t bytes)
                 {
@@ -57,7 +55,6 @@ public:
 #ifdef DEBUG
                        std::cout<<"client write after connect without error: "<<login<<std::endl;
 #endif
-                       //Чтение, выбрасывающее ошибку EOF
                        this->sock->async_read_some(boost::asio::buffer(this->buf, 1024),
                                                    [this](const boost::system::error_code& error, size_t bytes)
                        {
@@ -95,7 +92,7 @@ public:
             }
         });
     }
-    void request(const std::string& request, std::shared_ptr<std::string> answer)
+    void request(const std::string& request, std::shared_ptr<std::string>& answer)
     {
 #ifdef DEBUG
         std::cout << "client start request: " << login << std::endl;
